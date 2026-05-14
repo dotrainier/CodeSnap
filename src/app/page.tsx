@@ -6,7 +6,7 @@ import { SearchBar } from '@/components/SearchBar';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import { Plus, Sparkles } from 'lucide-react';
+import { Plus, Code2, BookMarked, Star, Globe } from 'lucide-react';
 import type { Snippet } from '@/lib/types';
 
 interface PageProps {
@@ -42,43 +42,51 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     <div className="min-h-screen bg-background">
       <Navbar user={user} />
 
-      {/* Hero header */}
-      <div className="relative overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 bg-linear-to-br from-violet-500/5 via-transparent to-indigo-500/5 pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
+      {/* Header */}
+      <div className="relative overflow-hidden border-b border-border">
+        <div className="absolute inset-0 bg-linear-to-br from-primary/8 via-background to-violet-500/5 pointer-events-none" />
+        <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+        <div className="absolute top-4 left-1/3 h-24 w-48 rounded-full bg-violet-400/8 blur-2xl pointer-events-none" />
         <div className="container mx-auto px-4 py-8 relative">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Sparkles className="h-4 w-4 text-violet-500" />
-                <span className="text-xs font-medium text-violet-500 uppercase tracking-wider">Your Library</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-6">
+            <div className="flex items-center gap-3.5">
+              <div className="flex items-center justify-center h-11 w-11 rounded-xl bg-linear-to-br from-primary to-violet-600 shadow-lg shadow-primary/25 shrink-0">
+                <Code2 className="h-5.5 w-5.5 text-white" />
               </div>
-              <h1 className="text-2xl font-bold tracking-tight">Code Snippets</h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Organize, highlight, and share your code beautifully.
-              </p>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">Code Snippets</h1>
+                <p className="text-sm text-muted-foreground mt-0.5">Your personal snippet library</p>
+              </div>
             </div>
-            <Link href="/new" className={cn(buttonVariants(), 'gap-2 shadow-lg shadow-primary/20')}>
-              <Plus className="h-4 w-4" />
+            <Link href="/new" className={cn(buttonVariants({ size: 'sm' }), 'gap-1.5 shrink-0 shadow-sm')}>
+              <Plus className="h-3.5 w-3.5" />
               New Snippet
             </Link>
           </div>
 
-          {/* Stats */}
           {!q && !filter && !lang && (
-            <div className="flex gap-4 mb-6 flex-wrap">
-              {[
-                { label: 'Total', value: totalSnippets },
-                { label: 'Favorites', value: favCount },
-                { label: 'Public', value: publicCount },
-              ].map(stat => (
-                <div key={stat.label} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/60 border border-border/50">
-                  <span className="text-lg font-bold text-foreground">{stat.value}</span>
-                  <span className="text-xs text-muted-foreground">{stat.label}</span>
+            <div className="grid grid-cols-3 gap-3 mb-6 max-w-sm">
+              <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-card border border-border/60 shadow-sm">
+                <div className="flex items-center gap-1.5">
+                  <BookMarked className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-xs text-muted-foreground font-medium">Total</span>
                 </div>
-              ))}
+                <span className="text-2xl font-bold tracking-tight">{totalSnippets}</span>
+              </div>
+              <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-card border border-amber-400/20 shadow-sm">
+                <div className="flex items-center gap-1.5">
+                  <Star className="h-3.5 w-3.5 text-amber-500" />
+                  <span className="text-xs text-muted-foreground font-medium">Starred</span>
+                </div>
+                <span className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">{favCount}</span>
+              </div>
+              <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-card border border-emerald-400/20 shadow-sm">
+                <div className="flex items-center gap-1.5">
+                  <Globe className="h-3.5 w-3.5 text-emerald-500" />
+                  <span className="text-xs text-muted-foreground font-medium">Public</span>
+                </div>
+                <span className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">{publicCount}</span>
+              </div>
             </div>
           )}
 

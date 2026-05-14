@@ -23,8 +23,27 @@ const LANG_COLORS: Record<string, string> = {
   ruby: 'bg-rose-400/15 text-rose-600 border-rose-400/30',
 };
 
+const LANG_ACCENT: Record<string, string> = {
+  javascript: 'bg-yellow-400',
+  typescript: 'bg-blue-500',
+  python: 'bg-green-500',
+  rust: 'bg-orange-500',
+  go: 'bg-cyan-500',
+  css: 'bg-pink-500',
+  html: 'bg-red-500',
+  sql: 'bg-indigo-500',
+  bash: 'bg-emerald-500',
+  java: 'bg-amber-500',
+  php: 'bg-violet-500',
+  ruby: 'bg-rose-500',
+};
+
 function getLangColor(lang: string) {
   return LANG_COLORS[lang.toLowerCase()] ?? 'bg-primary/10 text-primary border-primary/20';
+}
+
+function getLangAccent(lang: string) {
+  return LANG_ACCENT[lang.toLowerCase()] ?? 'bg-primary';
 }
 
 interface SnippetCardProps {
@@ -59,21 +78,22 @@ export function SnippetCard({ snippet, onDelete, onFavoriteToggle }: SnippetCard
     toast.success('Snippet deleted.');
   }
 
-  const previewLines = snippet.code.split('\n').slice(0, 7).join('\n');
-  const hasMore = snippet.code.split('\n').length > 7;
+  const previewLines = snippet.code.split('\n').slice(0, 10).join('\n');
+  const hasMore = snippet.code.split('\n').length > 10;
+  const totalLines = snippet.code.split('\n').length;
 
   const timeAgo = useMemo(() =>
     new Date(snippet.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
   [snippet.created_at]);
 
   return (
-    <div className="group relative rounded-xl border border-border/60 bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 overflow-hidden flex flex-col">
+    <div className="group relative rounded-xl border border-border bg-card hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20 hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col">
 
-      {/* Top accent bar */}
-      <div className="h-0.5 w-full bg-linear-to-r from-violet-500 via-indigo-500 to-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Language-colored top accent strip */}
+      <div className={cn('h-0.75 w-full shrink-0', getLangAccent(snippet.language))} />
 
       {/* Header */}
-      <div className="px-4 pt-4 pb-3">
+      <div className="px-4 pt-3.5 pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3 className="font-semibold text-sm truncate leading-tight">{snippet.title}</h3>
@@ -104,23 +124,24 @@ export function SnippetCard({ snippet, onDelete, onFavoriteToggle }: SnippetCard
       </div>
 
       {/* Code preview */}
-      <div className="mx-4 mb-3 rounded-lg overflow-hidden border border-border/40">
-        <div className="flex items-center gap-1.5 px-3 py-2 bg-[#1e1e2e] border-b border-white/5">
-          <div className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-          <div className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-          <div className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+      <div className="mx-4 mb-3 rounded-lg overflow-hidden shadow-lg">
+        <div className="flex items-center gap-1.5 px-3 py-2 bg-[#181825]">
+          <div className="h-2 w-2 rounded-full bg-[#ff5f57]/80" />
+          <div className="h-2 w-2 rounded-full bg-[#febc2e]/80" />
+          <div className="h-2 w-2 rounded-full bg-[#28c840]/80" />
+          <span className="ml-auto text-[10px] text-white/25 font-mono">{totalLines} lines</span>
         </div>
         <pre
-          className="text-xs p-3 overflow-hidden font-mono leading-relaxed max-h-36 select-none"
+          className="text-xs px-3 pt-2 pb-3 overflow-hidden font-mono leading-relaxed max-h-44 select-none"
           style={{ background: '#1e1e2e', color: '#cdd6f4' }}
         >
-          <code>{previewLines}{hasMore ? '\n...' : ''}</code>
+          <code>{previewLines}{hasMore ? '\n···' : ''}</code>
         </pre>
       </div>
 
       {/* Description */}
       {snippet.description && (
-        <p className="px-4 text-xs text-muted-foreground line-clamp-1 mb-2">{snippet.description}</p>
+        <p className="px-4 text-xs text-muted-foreground line-clamp-2 mb-2 leading-relaxed">{snippet.description}</p>
       )}
 
       {/* Tags */}
@@ -138,35 +159,35 @@ export function SnippetCard({ snippet, onDelete, onFavoriteToggle }: SnippetCard
       )}
 
       {/* Actions */}
-      <div className="mt-auto px-3 pb-3 pt-1 border-t border-border/40 flex items-center gap-1">
+      <div className="mt-auto px-3 pb-3 pt-2 border-t border-border/60 bg-muted/20 flex items-center gap-0.5">
         <Link
           href={`/snippet/${snippet.id}`}
-          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1 text-muted-foreground hover:text-foreground')}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background')}
         >
           <Eye className="h-3 w-3" /> View
         </Link>
         <Link
           href={`/snippet/${snippet.id}/edit`}
-          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1 text-muted-foreground hover:text-foreground')}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background')}
         >
           <Edit className="h-3 w-3" /> Edit
         </Link>
-        <Link
-          href={`/snippet/${snippet.id}?export=1`}
-          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1 text-muted-foreground hover:text-foreground')}
-        >
-          <Camera className="h-3 w-3" /> Export
-        </Link>
         <Button
           variant="ghost" size="sm"
-          className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground"
+          className="h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background"
           onClick={handleCopy}
         >
           <Copy className="h-3 w-3" /> Copy
         </Button>
+        <Link
+          href={`/snippet/${snippet.id}?export=1`}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background')}
+        >
+          <Camera className="h-3 w-3" /> Export
+        </Link>
         <Button
           variant="ghost" size="icon-sm"
-          className="h-7 w-7 ml-auto text-muted-foreground/40 hover:text-destructive"
+          className="h-7 w-7 ml-auto text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10"
           onClick={handleDelete}
         >
           <Trash2 className="h-3.5 w-3.5" />

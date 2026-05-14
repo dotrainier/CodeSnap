@@ -26,15 +26,16 @@ export function Navbar({ user }: { user: SupabaseUser }) {
   const initials = user.email?.slice(0, 2).toUpperCase() ?? 'U';
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl">
-      <div className="container mx-auto flex h-14 items-center justify-between px-4">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
+      <div className="h-0.5 w-full bg-primary" />
+      <div className="container mx-auto flex h-13 items-center justify-between px-4">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-linear-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 group-hover:shadow-violet-500/40 transition-shadow">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-linear-to-br from-primary to-violet-600 shadow-sm shadow-primary/30">
             <Code2 className="h-4 w-4 text-white" />
           </div>
-          <span className="font-bold text-base bg-linear-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent">
+          <span className="font-bold text-base bg-linear-to-r from-primary to-violet-500 bg-clip-text text-transparent">
             CodeSnap
           </span>
         </Link>
@@ -42,8 +43,8 @@ export function Navbar({ user }: { user: SupabaseUser }) {
         {/* Right side */}
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-            <Avatar className="h-8 w-8 ring-2 ring-border hover:ring-primary/50 transition-all">
-              <AvatarFallback className="text-xs bg-linear-to-br from-violet-500 to-indigo-600 text-white font-semibold">
+            <Avatar className="h-7 w-7 ring-1 ring-border hover:ring-primary/60 transition-all">
+              <AvatarFallback className="text-xs bg-primary/15 text-primary font-semibold">
                 {initials}
               </AvatarFallback>
             </Avatar>

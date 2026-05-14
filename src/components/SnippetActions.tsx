@@ -37,27 +37,34 @@ export function SnippetActions({
 
   return (
     <>
-      <div className="flex gap-2 shrink-0 flex-wrap justify-end">
+      <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
+            <Copy className="h-3.5 w-3.5" /> Copy
+          </Button>
+          <Link
+            href={`/snippet/${snippet.id}/edit`}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5')}
+          >
+            <Edit className="h-3.5 w-3.5" /> Edit
+          </Link>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => setExportOpen(true)}
+          className="w-full gap-1.5 shadow-sm shadow-primary/20"
+        >
+          <Camera className="h-3.5 w-3.5" /> Export as Image
+        </Button>
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="sm"
           onClick={handleFavorite}
-          className={isFavorite ? 'text-yellow-500' : ''}
+          className={cn('w-full gap-1.5', isFavorite ? 'text-amber-500 hover:text-amber-400' : 'text-muted-foreground')}
         >
-          <Star className="h-4 w-4" fill={isFavorite ? 'currentColor' : 'none'} />
+          <Star className="h-3.5 w-3.5" fill={isFavorite ? 'currentColor' : 'none'} />
+          {isFavorite ? 'Starred' : 'Add to Favorites'}
         </Button>
-        <Button variant="outline" size="sm" onClick={handleCopy}>
-          <Copy className="h-4 w-4 mr-1" /> Copy
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => setExportOpen(true)}>
-          <Camera className="h-4 w-4 mr-1" /> Export
-        </Button>
-        <Link
-          href={`/snippet/${snippet.id}/edit`}
-          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-        >
-          <Edit className="h-4 w-4 mr-1" /> Edit
-        </Link>
       </div>
 
       <ExportModal snippet={snippet} open={exportOpen} onOpenChange={setExportOpen} />

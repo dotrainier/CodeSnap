@@ -6,6 +6,7 @@ import { SnippetCard } from '@/components/SnippetCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import { Code2, Plus } from 'lucide-react';
 import type { Snippet } from '@/lib/types';
 
 interface SnippetListClientProps {
@@ -16,8 +17,8 @@ interface SnippetListClientProps {
 }
 
 const FILTERS = [
-  { value: undefined, label: 'All Snippets' },
-  { value: 'favorites', label: 'Favorites ⭐' },
+  { value: undefined, label: 'All' },
+  { value: 'favorites', label: 'Favorites' },
   { value: 'public', label: 'Public' },
 ];
 
@@ -38,48 +39,55 @@ export function SnippetListClient({ initialSnippets, searchQuery, filter, lang }
 
   return (
     <div className="space-y-6">
-      {/* Filter tabs */}
-      <div className="flex gap-1 border-b">
-        {FILTERS.map((f) => {
-          const active = (filter ?? undefined) === f.value;
-          return (
+      {/* Filter tabs + language row */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 pb-1 border-b border-border/50">
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-muted/60 border border-border/40">
+          {FILTERS.map((f) => {
+            const active = (filter ?? undefined) === f.value;
+            return (
+              <Link
+                key={f.label}
+                href={buildUrl({ filter: f.value, lang, q: searchQuery })}
+                className={cn(
+                  'px-4 py-1.5 text-sm rounded-lg font-medium transition-all',
+                  active
+                    ? 'bg-card text-foreground shadow-sm border border-border/60'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {f.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        {languages.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 items-center sm:ml-2">
+            <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Lang:</span>
             <Link
-              key={f.label}
-              href={buildUrl({ filter: f.value, lang, q: searchQuery })}
+              href={buildUrl({ filter, q: searchQuery })}
               className={cn(
-                'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
-                active
-                  ? 'border-primary text-foreground'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                'text-xs px-2.5 py-1 rounded-full font-medium transition-all border',
+                !lang ? 'bg-primary/10 text-primary border-primary/30' : 'text-muted-foreground hover:text-foreground border-transparent hover:border-border/60 hover:bg-accent'
               )}
             >
-              {f.label}
+              All
             </Link>
-          );
-        })}
+            {languages.map((l) => (
+              <Link
+                key={l}
+                href={buildUrl({ filter, lang: l, q: searchQuery })}
+                className={cn(
+                  'text-xs px-2.5 py-1 rounded-full font-medium transition-all border',
+                  lang === l ? 'bg-primary/10 text-primary border-primary/30' : 'text-muted-foreground hover:text-foreground border-transparent hover:border-border/60 hover:bg-accent'
+                )}
+              >
+                {l}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Language filters */}
-      {languages.length > 0 && (
-        <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-xs text-muted-foreground">Language:</span>
-          <Link
-            href={buildUrl({ filter, q: searchQuery })}
-            className={cn('text-xs px-2 py-0.5 rounded', !lang ? 'bg-muted font-medium' : 'text-muted-foreground hover:text-foreground')}
-          >
-            All
-          </Link>
-          {languages.map((l) => (
-            <Link
-              key={l}
-              href={buildUrl({ filter, lang: l, q: searchQuery })}
-              className={cn('text-xs px-2 py-0.5 rounded', lang === l ? 'bg-muted font-medium' : 'text-muted-foreground hover:text-foreground')}
-            >
-              {l}
-            </Link>
-          ))}
-        </div>
-      )}
 
       {/* Results header */}
       {searchQuery && (
@@ -90,10 +98,18 @@ export function SnippetListClient({ initialSnippets, searchQuery, filter, lang }
 
       {/* Snippet grid */}
       {snippets.length === 0 ? (
-        <div className="text-center py-16 space-y-3">
-          <p className="text-muted-foreground text-lg">No snippets yet.</p>
-          <p className="text-sm text-muted-foreground">Save your first code snippet to get started.</p>
-          <Link href="/new" className={cn(buttonVariants())}>
+        <div className="text-center py-20 flex flex-col items-center gap-4">
+          <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-linear-to-br from-primary/20 to-violet-500/10 shadow-inner ring-1 ring-primary/10">
+            <Code2 className="h-8 w-8 text-primary" />
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium text-foreground">No snippets yet</p>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Save your first code snippet to start building your library.
+            </p>
+          </div>
+          <Link href="/new" className={cn(buttonVariants({ size: 'sm' }), 'gap-1.5 mt-1')}>
+            <Plus className="h-3.5 w-3.5" />
             Create your first snippet
           </Link>
         </div>
