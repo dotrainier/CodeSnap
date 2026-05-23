@@ -6,7 +6,7 @@ import { Navbar } from '@/components/Navbar';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Eye, Hash, Globe } from 'lucide-react';
+import { ArrowLeft, Calendar, Eye, Hash, Globe, AlignLeft, Type, Clock } from 'lucide-react';
 
 const LANG_COLORS: Record<string, string> = {
   javascript: 'bg-yellow-400/15 text-yellow-600 dark:text-yellow-400 border-yellow-400/30',
@@ -52,12 +52,17 @@ export default async function SnippetPage({
 
   const lineCount = snippet.code.split('\n').length;
   const charCount = snippet.code.length;
+  const wordCount = snippet.code.split(/\s+/).filter(Boolean).length;
+  const readTimeSec = Math.max(1, Math.round((lineCount / 200) * 60));
+  const readTimeLabel = readTimeSec < 60
+    ? `${readTimeSec}s`
+    : `${Math.round(readTimeSec / 60)}m ${readTimeSec % 60}s`;
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar user={user} />
 
-      <div className="container mx-auto px-4 py-5 max-w-6xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8 max-w-6xl">
         {/* Breadcrumb */}
         <Link
           href="/"
@@ -68,35 +73,87 @@ export default async function SnippetPage({
         </Link>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px] gap-5 items-start">
 
-          {/* LEFT: Code viewer */}
-          <div className="rounded-2xl overflow-hidden border border-border shadow-xl shadow-black/5 dark:shadow-black/20">
-            <div className="flex items-center justify-between px-4 py-3 bg-[#11111b] border-b border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-                  <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
-                  <div className="h-3 w-3 rounded-full bg-[#28c840]" />
+          {/* LEFT: Code viewer + Insights */}
+          <div className="flex flex-col gap-5 order-2 lg:order-1">
+            <div className="rounded-2xl overflow-hidden border border-border shadow-xl shadow-black/5 dark:shadow-black/20">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#11111b] border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-1.5">
+                    <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+                    <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
+                    <div className="h-3 w-3 rounded-full bg-[#28c840]" />
+                  </div>
+                  <span className="text-[11px] text-white/35 font-mono">{snippet.title}.{snippet.language}</span>
                 </div>
-                <span className="text-[11px] text-white/35 font-mono">{snippet.title}.{snippet.language}</span>
+                <div className="flex items-center gap-3">
+                  <span className={cn('text-[10px] px-2 py-0.5 rounded-md font-mono font-bold border', getLangColor(snippet.language))}>
+                    {snippet.language}
+                  </span>
+                  <span className="text-[10px] text-white/20 font-mono">{lineCount} ln</span>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className={cn('text-[10px] px-2 py-0.5 rounded-md font-mono font-bold border', getLangColor(snippet.language))}>
-                  {snippet.language}
-                </span>
-                <span className="text-[10px] text-white/20 font-mono">{lineCount} ln</span>
+              <CodeHighlighter code={snippet.code} language={snippet.language} theme="dracula" />
+              <div className="flex items-center justify-between px-4 py-1.5 bg-[#11111b] border-t border-white/5 text-[10px] font-mono text-white/20">
+                <span>UTF-8</span>
+                <span>{lineCount} lines · {charCount} chars</span>
               </div>
             </div>
-            <CodeHighlighter code={snippet.code} language={snippet.language} theme="dracula" />
-            <div className="flex items-center justify-between px-4 py-1.5 bg-[#11111b] border-t border-white/5 text-[10px] font-mono text-white/20">
-              <span>UTF-8</span>
-              <span>{lineCount} lines · {charCount} chars</span>
+
+            {/* Code Insights */}
+            <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+              <div className="px-4 py-3 border-b border-border/50 bg-muted/30">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Code Insights</span>
+              </div>
+              <div className="grid grid-cols-3 divide-x divide-border/40 min-w-0">
+                <div className="flex flex-col items-center gap-1 px-4 py-4">
+                  <AlignLeft className="h-4 w-4 text-muted-foreground mb-0.5" />
+                  <span className="text-xl font-bold tabular-nums">{lineCount}</span>
+                  <span className="text-[11px] text-muted-foreground">Lines</span>
+                </div>
+                <div className="flex flex-col items-center gap-1 px-4 py-4">
+                  <Type className="h-4 w-4 text-muted-foreground mb-0.5" />
+                  <span className="text-xl font-bold tabular-nums">{wordCount.toLocaleString()}</span>
+                  <span className="text-[11px] text-muted-foreground">Tokens</span>
+                </div>
+                <div className="flex flex-col items-center gap-1 px-4 py-4">
+                  <Clock className="h-4 w-4 text-muted-foreground mb-0.5" />
+                  <span className="text-xl font-bold tabular-nums">{readTimeLabel}</span>
+                  <span className="text-[11px] text-muted-foreground">Read time</span>
+                </div>
+              </div>
+              <div className="px-4 pb-4 space-y-3">
+                <div>
+                  <div className="flex justify-between text-[11px] text-muted-foreground mb-1.5">
+                    <span>Lines</span>
+                    <span className="font-medium text-foreground">{lineCount} / 500</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all"
+                      style={{ width: `${Math.min((lineCount / 500) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[11px] text-muted-foreground mb-1.5">
+                    <span>Size</span>
+                    <span className="font-medium text-foreground">{charCount.toLocaleString()} chars</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-violet-500 transition-all"
+                      style={{ width: `${Math.min((charCount / 10000) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* RIGHT: Metadata sidebar */}
-          <div className="space-y-4">
+          <div className="space-y-4 order-1 lg:order-2">
 
             {/* Title + actions card */}
             <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">

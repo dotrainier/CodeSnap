@@ -164,26 +164,30 @@ export function SnippetCard({ snippet, onDelete, onFavoriteToggle }: SnippetCard
           href={`/snippet/${snippet.id}`}
           className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background')}
         >
-          <Eye className="h-3 w-3" /> View
+          <Eye className="h-3 w-3" />
+          <span className="hidden xs:inline lg:hidden xl:inline">View</span>
         </Link>
         <Link
           href={`/snippet/${snippet.id}/edit`}
           className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background')}
         >
-          <Edit className="h-3 w-3" /> Edit
+          <Edit className="h-3 w-3" />
+          <span className="hidden xs:inline lg:hidden xl:inline">Edit</span>
         </Link>
         <Button
           variant="ghost" size="sm"
           className="h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background"
           onClick={handleCopy}
         >
-          <Copy className="h-3 w-3" /> Copy
+          <Copy className="h-3 w-3" />
+          <span className="hidden xs:inline lg:hidden xl:inline">Copy</span>
         </Button>
         <Link
           href={`/snippet/${snippet.id}?export=1`}
           className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-background')}
         >
-          <Camera className="h-3 w-3" /> Export
+          <Camera className="h-3 w-3" />
+          <span className="hidden xs:inline lg:hidden xl:inline">Export</span>
         </Link>
         <Button
           variant="ghost" size="icon-sm"

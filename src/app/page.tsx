@@ -47,7 +47,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         <div className="absolute inset-0 bg-linear-to-br from-primary/8 via-background to-violet-500/5 pointer-events-none" />
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
         <div className="absolute top-4 left-1/3 h-24 w-48 rounded-full bg-violet-400/8 blur-2xl pointer-events-none" />
-        <div className="container mx-auto px-4 py-8 relative">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 relative max-w-7xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-6">
             <div className="flex items-center gap-3.5">
               <div className="flex items-center justify-center h-11 w-11 rounded-xl bg-linear-to-br from-primary to-violet-600 shadow-lg shadow-primary/25 shrink-0">
@@ -65,27 +65,27 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           </div>
 
           {!q && !filter && !lang && (
-            <div className="grid grid-cols-3 gap-3 mb-6 max-w-sm">
-              <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-card border border-border/60 shadow-sm">
-                <div className="flex items-center gap-1.5">
-                  <BookMarked className="h-3.5 w-3.5 text-primary" />
-                  <span className="text-xs text-muted-foreground font-medium">Total</span>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 max-w-sm">
+              <div className="flex flex-col gap-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-card border border-border/60 shadow-sm">
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <BookMarked className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary shrink-0" />
+                  <span className="text-xs text-muted-foreground font-medium truncate">Total</span>
                 </div>
-                <span className="text-2xl font-bold tracking-tight">{totalSnippets}</span>
+                <span className="text-xl sm:text-2xl font-bold tracking-tight">{totalSnippets}</span>
               </div>
-              <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-card border border-amber-400/20 shadow-sm">
-                <div className="flex items-center gap-1.5">
-                  <Star className="h-3.5 w-3.5 text-amber-500" />
-                  <span className="text-xs text-muted-foreground font-medium">Starred</span>
+              <div className="flex flex-col gap-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-card border border-amber-400/20 shadow-sm">
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-500 shrink-0" />
+                  <span className="text-xs text-muted-foreground font-medium truncate">Starred</span>
                 </div>
-                <span className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">{favCount}</span>
+                <span className="text-xl sm:text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">{favCount}</span>
               </div>
-              <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-card border border-emerald-400/20 shadow-sm">
-                <div className="flex items-center gap-1.5">
-                  <Globe className="h-3.5 w-3.5 text-emerald-500" />
-                  <span className="text-xs text-muted-foreground font-medium">Public</span>
+              <div className="flex flex-col gap-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-card border border-emerald-400/20 shadow-sm">
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <Globe className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500 shrink-0" />
+                  <span className="text-xs text-muted-foreground font-medium truncate">Public</span>
                 </div>
-                <span className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">{publicCount}</span>
+                <span className="text-xl sm:text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">{publicCount}</span>
               </div>
             </div>
           )}
@@ -94,7 +94,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
         <SnippetListClient initialSnippets={snippets} searchQuery={q} filter={filter} lang={lang} />
       </main>
     </div>
