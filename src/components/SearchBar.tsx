@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -8,15 +8,17 @@ import { Search } from 'lucide-react';
 export function SearchBar({ defaultValue = '' }: { defaultValue?: string }) {
   const router = useRouter();
   const [value, setValue] = useState(defaultValue);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleSearch = useCallback(
-    (term: string) => {
+  function handleChange(term: string) {
+    setValue(term);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
       const params = new URLSearchParams();
       if (term) params.set('q', term);
       router.push(`/?${params.toString()}`);
-    },
-    [router]
-  );
+    }, 300);
+  }
 
   return (
     <div className="relative">
@@ -26,10 +28,7 @@ export function SearchBar({ defaultValue = '' }: { defaultValue?: string }) {
         placeholder="Search snippets..."
         className="pl-9"
         value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          handleSearch(e.target.value);
-        }}
+        onChange={(e) => handleChange(e.target.value)}
       />
     </div>
   );

@@ -7,25 +7,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { ArrowLeft, Calendar, Eye, Hash, Globe, AlignLeft, Type, Clock } from 'lucide-react';
-
-const LANG_COLORS: Record<string, string> = {
-  javascript: 'bg-yellow-400/15 text-yellow-600 dark:text-yellow-400 border-yellow-400/30',
-  typescript: 'bg-blue-400/15 text-blue-600 dark:text-blue-400 border-blue-400/30',
-  python: 'bg-green-400/15 text-green-600 dark:text-green-400 border-green-400/30',
-  rust: 'bg-orange-400/15 text-orange-600 dark:text-orange-400 border-orange-400/30',
-  go: 'bg-cyan-400/15 text-cyan-600 dark:text-cyan-400 border-cyan-400/30',
-  css: 'bg-pink-400/15 text-pink-600 dark:text-pink-400 border-pink-400/30',
-  html: 'bg-red-400/15 text-red-600 dark:text-red-400 border-red-400/30',
-  sql: 'bg-indigo-400/15 text-indigo-600 dark:text-indigo-400 border-indigo-400/30',
-  bash: 'bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 border-emerald-400/30',
-  java: 'bg-amber-400/15 text-amber-700 dark:text-amber-400 border-amber-400/30',
-  php: 'bg-violet-400/15 text-violet-600 dark:text-violet-400 border-violet-400/30',
-  ruby: 'bg-rose-400/15 text-rose-600 dark:text-rose-400 border-rose-400/30',
-};
-
-function getLangColor(lang: string) {
-  return LANG_COLORS[lang.toLowerCase()] ?? 'bg-primary/10 text-primary border-primary/20';
-}
+import { getLangColor } from '@/lib/types';
 
 export default async function SnippetPage({
   params,
@@ -88,7 +70,7 @@ export default async function SnippetPage({
                   <span className="text-[11px] text-white/35 font-mono">{snippet.title}.{snippet.language}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={cn('text-[10px] px-2 py-0.5 rounded-md font-mono font-bold border', getLangColor(snippet.language))}>
+                  <span className={cn('text-[10px] px-2 py-0.5 rounded-md font-mono font-bold border', getLangColor(snippet.language, true))}>
                     {snippet.language}
                   </span>
                   <span className="text-[10px] text-white/20 font-mono">{lineCount} ln</span>
@@ -172,7 +154,7 @@ export default async function SnippetPage({
               <div className="divide-y divide-border/40">
                 <div className="flex items-center justify-between px-4 py-2.5">
                   <span className="text-xs text-muted-foreground">Language</span>
-                  <span className={cn('text-xs px-2.5 py-0.5 rounded-full border font-semibold', getLangColor(snippet.language))}>
+                  <span className={cn('text-xs px-2.5 py-0.5 rounded-full border font-semibold', getLangColor(snippet.language, true))}>
                     {snippet.language}
                   </span>
                 </div>

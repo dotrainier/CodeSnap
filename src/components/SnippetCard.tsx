@@ -3,48 +3,18 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { Button, buttonVariants } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { Eye, Edit, Star, Trash2, Copy, Camera } from 'lucide-react';
 import { toast } from 'sonner';
+import { getLangColor, getLangAccent } from '@/lib/types';
 import type { Snippet } from '@/lib/types';
-
-const LANG_COLORS: Record<string, string> = {
-  javascript: 'bg-yellow-400/15 text-yellow-600 border-yellow-400/30',
-  typescript: 'bg-blue-400/15 text-blue-600 border-blue-400/30',
-  python: 'bg-green-400/15 text-green-600 border-green-400/30',
-  rust: 'bg-orange-400/15 text-orange-600 border-orange-400/30',
-  go: 'bg-cyan-400/15 text-cyan-600 border-cyan-400/30',
-  css: 'bg-pink-400/15 text-pink-600 border-pink-400/30',
-  html: 'bg-red-400/15 text-red-600 border-red-400/30',
-  sql: 'bg-indigo-400/15 text-indigo-600 border-indigo-400/30',
-  bash: 'bg-emerald-400/15 text-emerald-600 border-emerald-400/30',
-  java: 'bg-amber-400/15 text-amber-700 border-amber-400/30',
-  php: 'bg-violet-400/15 text-violet-600 border-violet-400/30',
-  ruby: 'bg-rose-400/15 text-rose-600 border-rose-400/30',
-};
-
-const LANG_ACCENT: Record<string, string> = {
-  javascript: 'bg-yellow-400',
-  typescript: 'bg-blue-500',
-  python: 'bg-green-500',
-  rust: 'bg-orange-500',
-  go: 'bg-cyan-500',
-  css: 'bg-pink-500',
-  html: 'bg-red-500',
-  sql: 'bg-indigo-500',
-  bash: 'bg-emerald-500',
-  java: 'bg-amber-500',
-  php: 'bg-violet-500',
-  ruby: 'bg-rose-500',
-};
-
-function getLangColor(lang: string) {
-  return LANG_COLORS[lang.toLowerCase()] ?? 'bg-primary/10 text-primary border-primary/20';
-}
-
-function getLangAccent(lang: string) {
-  return LANG_ACCENT[lang.toLowerCase()] ?? 'bg-primary';
-}
 
 interface SnippetCardProps {
   snippet: Snippet;
@@ -54,6 +24,7 @@ interface SnippetCardProps {
 
 export function SnippetCard({ snippet, onDelete, onFavoriteToggle }: SnippetCardProps) {
   const [isFavorite, setIsFavorite] = useState(snippet.is_favorite);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   async function handleCopy() {
     await navigator.clipboard.writeText(snippet.code);
@@ -63,19 +34,30 @@ export function SnippetCard({ snippet, onDelete, onFavoriteToggle }: SnippetCard
   async function handleFavorite() {
     const next = !isFavorite;
     setIsFavorite(next);
-    await fetch(`/api/snippets/${snippet.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ is_favorite: next }),
-    });
-    onFavoriteToggle?.(snippet.id, next);
+    try {
+      const res = await fetch(`/api/snippets/${snippet.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_favorite: next }),
+      });
+      if (!res.ok) throw new Error();
+      onFavoriteToggle?.(snippet.id, next);
+    } catch {
+      setIsFavorite(!next);
+      toast.error('Failed to update favorite.');
+    }
   }
 
-  async function handleDelete() {
-    if (!confirm('Delete this snippet?')) return;
-    await fetch(`/api/snippets/${snippet.id}`, { method: 'DELETE' });
-    onDelete?.(snippet.id);
-    toast.success('Snippet deleted.');
+  async function confirmDelete() {
+    setDeleteOpen(false);
+    try {
+      const res = await fetch(`/api/snippets/${snippet.id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      onDelete?.(snippet.id);
+      toast.success('Snippet deleted.');
+    } catch {
+      toast.error('Failed to delete snippet.');
+    }
   }
 
   const previewLines = snippet.code.split('\n').slice(0, 10).join('\n');
@@ -192,11 +174,30 @@ export function SnippetCard({ snippet, onDelete, onFavoriteToggle }: SnippetCard
         <Button
           variant="ghost" size="icon-sm"
           className="h-7 w-7 ml-auto text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10"
-          onClick={handleDelete}
+          onClick={() => setDeleteOpen(true)}
         >
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete snippet?</DialogTitle>
+            <DialogDescription>
+              &ldquo;{snippet.title}&rdquo; will be permanently deleted. This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => setDeleteOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" size="sm" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

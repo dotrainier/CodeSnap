@@ -27,12 +27,18 @@ export function SnippetActions({
   async function handleFavorite() {
     const next = !isFavorite;
     setIsFavorite(next);
-    await fetch(`/api/snippets/${snippet.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ is_favorite: next }),
-    });
-    toast.success(next ? 'Added to favorites!' : 'Removed from favorites.');
+    try {
+      const res = await fetch(`/api/snippets/${snippet.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_favorite: next }),
+      });
+      if (!res.ok) throw new Error();
+      toast.success(next ? 'Added to favorites!' : 'Removed from favorites.');
+    } catch {
+      setIsFavorite(!next);
+      toast.error('Failed to update favorite.');
+    }
   }
 
   return (

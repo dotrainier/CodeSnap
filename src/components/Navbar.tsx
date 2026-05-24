@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { createClient } from '@/lib/supabase/client';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,12 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Code2, LogOut, User } from 'lucide-react';
+import { Code2, LogOut, User, Sun, Moon } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 export function Navbar({ user }: { user: SupabaseUser }) {
   const router = useRouter();
   const supabase = createClient();
+  const { theme, setTheme } = useTheme();
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -41,6 +44,17 @@ export function Navbar({ user }: { user: SupabaseUser }) {
         </Link>
 
         {/* Right side */}
+        <div className="flex items-center gap-1.5">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          aria-label="Toggle theme"
+        >
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <Avatar className="h-7 w-7 ring-1 ring-border hover:ring-primary/60 transition-all">
@@ -64,6 +78,7 @@ export function Navbar({ user }: { user: SupabaseUser }) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       </div>
     </header>
   );

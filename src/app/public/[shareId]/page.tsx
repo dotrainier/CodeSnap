@@ -5,25 +5,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { Code2, Calendar, Eye } from 'lucide-react';
-
-const LANG_COLORS: Record<string, string> = {
-  javascript: 'bg-yellow-400/15 text-yellow-600 border-yellow-400/30',
-  typescript: 'bg-blue-400/15 text-blue-600 border-blue-400/30',
-  python: 'bg-green-400/15 text-green-600 border-green-400/30',
-  rust: 'bg-orange-400/15 text-orange-600 border-orange-400/30',
-  go: 'bg-cyan-400/15 text-cyan-600 border-cyan-400/30',
-  css: 'bg-pink-400/15 text-pink-600 border-pink-400/30',
-  html: 'bg-red-400/15 text-red-600 border-red-400/30',
-  sql: 'bg-indigo-400/15 text-indigo-600 border-indigo-400/30',
-  bash: 'bg-emerald-400/15 text-emerald-600 border-emerald-400/30',
-  java: 'bg-amber-400/15 text-amber-700 border-amber-400/30',
-  php: 'bg-violet-400/15 text-violet-600 border-violet-400/30',
-  ruby: 'bg-rose-400/15 text-rose-600 border-rose-400/30',
-};
-
-function getLangColor(lang: string) {
-  return LANG_COLORS[lang.toLowerCase()] ?? 'bg-primary/10 text-primary border-primary/20';
-}
+import { getLangColor } from '@/lib/types';
 
 export default async function PublicSnippetPage({ params }: { params: Promise<{ shareId: string }> }) {
   const { shareId } = await params;
