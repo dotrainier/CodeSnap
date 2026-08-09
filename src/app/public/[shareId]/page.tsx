@@ -7,7 +7,11 @@ import { buttonVariants } from '@/components/ui/button';
 import { Code2, Calendar, Eye } from 'lucide-react';
 import { getLangColor } from '@/lib/types';
 
-export default async function PublicSnippetPage({ params }: { params: Promise<{ shareId: string }> }) {
+export default async function PublicSnippetPage({
+  params,
+}: {
+  params: Promise<{ shareId: string }>;
+}) {
   const { shareId } = await params;
   const supabase = await createClient();
 
@@ -27,46 +31,55 @@ export default async function PublicSnippetPage({ params }: { params: Promise<{ 
     .then(() => {});
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Branded navbar */}
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-linear-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 group-hover:shadow-violet-500/40 transition-shadow">
-              <Code2 className="h-4 w-4 text-white" />
+    <div className='min-h-screen bg-background'>
+      <header className='sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-xl'>
+        <div className='container mx-auto px-4 h-14 flex items-center justify-between'>
+          <Link href='/' className='flex items-center gap-2 group'>
+            <div className='flex items-center justify-center h-7 w-7 rounded-lg bg-linear-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 group-hover:shadow-violet-500/40 transition-shadow'>
+              <Code2 className='h-4 w-4 text-white' />
             </div>
-            <span className="font-bold text-base bg-linear-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent">
+            <span className='font-bold text-base bg-linear-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent'>
               CodeSnap
             </span>
           </Link>
-          <Link href="/auth" className={cn(buttonVariants({ size: 'sm' }), 'shadow-lg shadow-primary/20')}>
+          <Link
+            href='/auth'
+            className={cn(buttonVariants({ size: 'sm' }), 'shadow-lg shadow-primary/20')}
+          >
             Sign in to save snippets
           </Link>
         </div>
       </header>
-
-      {/* Page header decoration */}
-      <div className="relative overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 bg-linear-to-br from-violet-500/5 via-transparent to-indigo-500/5 pointer-events-none" />
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-violet-500/8 rounded-full blur-3xl pointer-events-none" />
-        <div className="container mx-auto px-4 py-5 relative">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-xl font-bold tracking-tight">{snippet.title}</h1>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                <span className={cn('text-xs px-2.5 py-1 rounded-full border font-medium', getLangColor(snippet.language))}>
+      <div className='relative overflow-hidden border-b border-border/50'>
+        <div className='absolute inset-0 bg-linear-to-br from-violet-500/5 via-transparent to-indigo-500/5 pointer-events-none' />
+        <div className='absolute -top-16 -right-16 w-48 h-48 bg-violet-500/8 rounded-full blur-3xl pointer-events-none' />
+        <div className='container mx-auto px-4 py-5 relative'>
+          <div className='flex items-start justify-between gap-4 flex-wrap'>
+            <div className='min-w-0 flex-1'>
+              <h1 className='text-xl font-bold tracking-tight'>{snippet.title}</h1>
+              <div className='flex items-center gap-2 mt-2 flex-wrap'>
+                <span
+                  className={cn(
+                    'text-xs px-2.5 py-1 rounded-full border font-medium',
+                    getLangColor(snippet.language),
+                  )}
+                >
                   {snippet.language}
                 </span>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-400/15 text-emerald-600 border border-emerald-400/30 font-medium">
+                <span className='text-xs px-2.5 py-1 rounded-full bg-emerald-400/15 text-emerald-600 border border-emerald-400/30 font-medium'>
                   Public
                 </span>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="h-3 w-3" />
-                  {new Date(snippet.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                <span className='flex items-center gap-1 text-xs text-muted-foreground'>
+                  <Calendar className='h-3 w-3' />
+                  {new Date(snippet.created_at).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
                 </span>
                 {snippet.view_count > 0 && (
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Eye className="h-3 w-3" />
+                  <span className='flex items-center gap-1 text-xs text-muted-foreground'>
+                    <Eye className='h-3 w-3' />
                     {snippet.view_count} views
                   </span>
                 )}
@@ -75,13 +88,18 @@ export default async function PublicSnippetPage({ params }: { params: Promise<{ 
           </div>
 
           {snippet.description && (
-            <p className="text-sm text-muted-foreground mt-3 leading-relaxed max-w-2xl">{snippet.description}</p>
+            <p className='text-sm text-muted-foreground mt-3 leading-relaxed max-w-2xl'>
+              {snippet.description}
+            </p>
           )}
 
           {snippet.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
+            <div className='flex flex-wrap gap-1.5 mt-3'>
               {snippet.tags.map((tag: string) => (
-                <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border/50">
+                <span
+                  key={tag}
+                  className='text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border/50'
+                >
                   #{tag}
                 </span>
               ))}
@@ -89,28 +107,30 @@ export default async function PublicSnippetPage({ params }: { params: Promise<{ 
           )}
         </div>
       </div>
-
-      <main className="container mx-auto px-4 py-6 max-w-4xl">
-        <div className="rounded-xl overflow-hidden border border-border/60 shadow-lg shadow-black/5">
-          <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#1e1e2e] border-b border-white/5">
-            <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-            <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
-            <div className="h-3 w-3 rounded-full bg-[#28c840]" />
-            <span className="ml-2 text-xs text-white/30 font-mono">{snippet.title}</span>
+      <main className='container mx-auto px-4 py-6 max-w-4xl'>
+        <div className='rounded-xl overflow-hidden border border-border/60 shadow-lg shadow-black/5'>
+          <div className='flex items-center gap-1.5 px-4 py-2.5 bg-[#1e1e2e] border-b border-white/5'>
+            <div className='h-3 w-3 rounded-full bg-[#ff5f57]' />
+            <div className='h-3 w-3 rounded-full bg-[#febc2e]' />
+            <div className='h-3 w-3 rounded-full bg-[#28c840]' />
+            <span className='ml-2 text-xs text-white/30 font-mono'>{snippet.title}</span>
           </div>
-          <CodeHighlighter code={snippet.code} language={snippet.language} theme="dracula" />
+          <CodeHighlighter code={snippet.code} language={snippet.language} theme='dracula' />
         </div>
 
-        {/* CTA */}
-        <div className="mt-8 rounded-xl border border-border/60 bg-linear-to-br from-violet-500/5 via-card to-indigo-500/5 p-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-linear-to-br from-violet-500 to-indigo-600">
-              <Code2 className="h-4 w-4 text-white" />
+        <div className='mt-8 rounded-xl border border-border/60 bg-linear-to-br from-violet-500/5 via-card to-indigo-500/5 p-6 text-center'>
+          <div className='flex items-center justify-center gap-2 mb-2'>
+            <div className='flex items-center justify-center h-8 w-8 rounded-lg bg-linear-to-br from-violet-500 to-indigo-600'>
+              <Code2 className='h-4 w-4 text-white' />
             </div>
-            <span className="font-bold text-lg bg-linear-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent">CodeSnap</span>
+            <span className='font-bold text-lg bg-linear-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent'>
+              CodeSnap
+            </span>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">Save, highlight, and share your code with beautiful visuals.</p>
-          <Link href="/auth" className={cn(buttonVariants(), 'shadow-lg shadow-primary/20')}>
+          <p className='text-sm text-muted-foreground mb-4'>
+            Save, highlight, and share your code with beautiful visuals.
+          </p>
+          <Link href='/auth' className={cn(buttonVariants(), 'shadow-lg shadow-primary/20')}>
             Start for free
           </Link>
         </div>

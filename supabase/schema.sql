@@ -1,76 +1,53 @@
--- ============================================================
--- CodeSnap Database Schema
--- Run this in the Supabase SQL Editor (one-time setup)
--- ============================================================
+-- CodeSnap schema (Supabase)
 
-
--- ------------------------------------------------------------
--- snippets table
--- ------------------------------------------------------------
-CREATE TABLE snippets (
-    id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    title       VARCHAR(255) NOT NULL,
-    code        TEXT        NOT NULL,
-    language    VARCHAR(50) NOT NULL,
-    description TEXT,
-    tags        TEXT[]      DEFAULT '{}',
-    is_public   BOOLEAN     DEFAULT false,
-    is_favorite BOOLEAN     DEFAULT false,
-    share_id    VARCHAR(20) UNIQUE,           -- generated when snippet is made public
-    view_count  INTEGER     DEFAULT 0,
-    created_at  TIMESTAMPTZ DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ DEFAULT NOW()
+create table snippets (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  title varchar(255) not null,
+  code text not null,
+  language varchar(50) not null,
+  description text,
+  tags text[] default '{}',
+  is_public boolean default false,
+  is_favorite boolean default false,
+  share_id varchar(20) unique,
+  view_count integer default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
 );
 
+create index idx_snippets_user_id on snippets(user_id);
+create index idx_snippets_share_id on snippets(share_id);
+create index idx_snippets_created_at on snippets(created_at desc);
+create index idx_snippets_tags on snippets using gin(tags);
 
--- ------------------------------------------------------------
--- Indexes
--- ------------------------------------------------------------
-CREATE INDEX idx_snippets_user_id    ON snippets(user_id);
-CREATE INDEX idx_snippets_share_id   ON snippets(share_id);
-CREATE INDEX idx_snippets_created_at ON snippets(created_at DESC);
-CREATE INDEX idx_snippets_tags       ON snippets USING GIN(tags);
+create or replace function update_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
 
+create trigger snippets_updated_at
+  before update on snippets
+  for each row
+  execute function update_updated_at();
 
--- ------------------------------------------------------------
--- Auto-update updated_at on row change
--- ------------------------------------------------------------
-CREATE OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+alter table snippets enable row level security;
 
-CREATE TRIGGER snippets_updated_at
-    BEFORE UPDATE ON snippets
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at();
+create policy "Users can view own snippets"
+  on snippets for select
+  using (auth.uid() = user_id or is_public = true);
 
+create policy "Users can create snippets"
+  on snippets for insert
+  with check (auth.uid() = user_id);
 
--- ------------------------------------------------------------
--- Row Level Security
--- ------------------------------------------------------------
-ALTER TABLE snippets ENABLE ROW LEVEL SECURITY;
+create policy "Users can update own snippets"
+  on snippets for update
+  using (auth.uid() = user_id);
 
--- Authenticated users can read their own snippets; anyone can read public ones
-CREATE POLICY "Users can view own snippets"
-    ON snippets FOR SELECT
-    USING (auth.uid() = user_id OR is_public = true);
-
--- Users can only insert snippets for themselves
-CREATE POLICY "Users can create snippets"
-    ON snippets FOR INSERT
-    WITH CHECK (auth.uid() = user_id);
-
--- Users can only update their own snippets
-CREATE POLICY "Users can update own snippets"
-    ON snippets FOR UPDATE
-    USING (auth.uid() = user_id);
-
--- Users can only delete their own snippets
-CREATE POLICY "Users can delete own snippets"
-    ON snippets FOR DELETE
-    USING (auth.uid() = user_id);
+create policy "Users can delete own snippets"
+  on snippets for delete
+  using (auth.uid() = user_id);

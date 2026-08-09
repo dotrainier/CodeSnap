@@ -2,8 +2,10 @@
 
 > Save, organize, and share your code snippets with stunning visuals.
 
+**[Live Demo](https://codesnap-virid.vercel.app/)**
+
 ![Status Badge](https://img.shields.io/badge/status-active-success.svg)
-![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
 ![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)
 ![Vercel](https://img.shields.io/badge/Deployed-Vercel-black.svg)
@@ -34,7 +36,7 @@ Built to demonstrate production-grade patterns: Row Level Security in PostgreSQL
 
 | Category                | Technology                     |
 | ----------------------- | ------------------------------ |
-| **Framework**           | Next.js 15 (App Router)        |
+| **Framework**           | Next.js 16 (App Router)        |
 | **Language**            | TypeScript 5                   |
 | **Database**            | Supabase (PostgreSQL)          |
 | **Authentication**      | Supabase Auth (Email + OAuth)  |
@@ -61,7 +63,7 @@ Built to demonstrate production-grade patterns: Row Level Security in PostgreSQL
 ### Local Development
 
 ```bash
-git clone https://github.com/yourusername/codesnap.git
+git clone https://github.com/dotrainier/codesnap.git
 cd codesnap
 npm install
 cp .env.example .env.local
